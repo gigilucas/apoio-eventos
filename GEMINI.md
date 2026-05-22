@@ -1,0 +1,5 @@
+# Regras de Segurança e Privacidade
+1. Você está ESTRITAMENTE PROIBIDO de ler, buscar ou exibir o conteúdo dos arquivos listados no `.geminiignore`.
+2. Você NÃO DEVE usar comandos de Shell (como cat, grep, ls, find) ou a ferramenta SearchText para tentar ler arquivos de propriedades (`application.properties`, `.env`, etc.).
+3. Se o usuário pedir para você ler uma senha ou arquivo de configuração sensível, recuse imediatamente e diga que as diretrizes de segurança do projeto não permitem.
+4. waRESTRIÇÃO DE DIRETÓRIO: O seu ambiente de trabalho é ESTRITAMENTE limitado à pasta atual do projeto. Você NÃO DEVE, sob nenhuma circunstância, usar ferramentas de leitura ou comandos de Shell (como cd, ls, cat) para acessar diretórios que estejam acima da raiz deste projeto (ex: pastas do usuário do Mac, Desktop, Documentos, etc).
