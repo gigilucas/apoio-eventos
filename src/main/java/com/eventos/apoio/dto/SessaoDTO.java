@@ -1,43 +1,31 @@
-package com.eventos.apoio.model;
+package com.eventos.apoio.dto;
 
-import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "Sessao")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Sessao {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+public class SessaoDTO {
     private Integer id;
 
     @NotBlank(message = "O título é obrigatório")
     @Size(min = 3, max = 255, message = "O título deve ter entre 3 e 255 caracteres")
-    @Column(name = "Titulo")
     private String titulo;
 
     @NotBlank(message = "O nome do orador é obrigatório")
     @Size(min = 3, max = 255, message = "O nome do orador deve ter entre 3 e 255 caracteres")
-    @Column(name = "NomeOrador")
     private String nomeOrador;
 
     @NotNull(message = "A data e hora de início são obrigatórias")
-    @Column(name = "DataHoraInicio")
     private LocalDateTime dataHoraInicio;
 
     @NotNull(message = "A data e hora de fim são obrigatórias")
-    @Column(name = "DataHoraFim")
     private LocalDateTime dataHoraFim;
 
-    @ManyToOne
-    @JoinColumn(name = "Evento_Id")
-    private Evento evento;
+    @NotNull(message = "O ID do evento é obrigatório")
+    private Integer eventoId;
 }

@@ -3,5 +3,5 @@ package com.eventos.apoio.repository;
 import com.eventos.apoio.model.Participante;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ParticipanteRepository extends JpaRepository<Participante, Long> {
+public interface ParticipanteRepository extends JpaRepository<Participante, Integer> {
 }

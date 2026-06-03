@@ -1,9 +1,10 @@
 package com.eventos.apoio.model;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -15,17 +16,19 @@ public class Certificado {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id") // Força a olhar para o 'id' minúsculo do Workbench
+    @Column(name = "id")
     private Integer id;
 
-    @Column(name = "codigoCertificado") // Mapeia direto para a tua coluna
+    @NotBlank(message = "O código do certificado é obrigatório")
+    @Size(min = 5, max = 255, message = "O código deve ter entre 5 e 255 caracteres")
+    @Column(name = "codigoCertificado")
     private String codigoCertificado;
 
     @Column(name = "DataEmissao", insertable = false, updatable = false)
-    // Mapeia para o teu 'DataEmissao' real e deixa o MySQL gerar o TIMESTAMP
     private LocalDateTime dataEmissao;
 
+    @NotNull(message = "A inscrição é obrigatória")
     @OneToOne
-    @JoinColumn(name = "Inscricao_Id") // Tem de ser igualzinho ao teu print: 'Inscricao_Id'
+    @JoinColumn(name = "Inscricao_Id")
     private Inscricao inscricao;
 }

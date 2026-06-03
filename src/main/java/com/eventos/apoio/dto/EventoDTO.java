@@ -1,52 +1,38 @@
-package com.eventos.apoio.model;
+package com.eventos.apoio.dto;
 
-import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "Evento")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Evento {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "Id")
+public class EventoDTO {
     private Integer id;
 
     @NotBlank(message = "O nome do evento é obrigatório")
     @Size(min = 3, max = 255, message = "O nome deve ter entre 3 e 255 caracteres")
-    @Column(name = "Nome")
     private String nome;
 
     @Size(max = 500, message = "A descrição não pode ter mais de 500 caracteres")
-    @Column(name = "Descricao")
     private String descricao;
 
     @NotNull(message = "A data de início é obrigatória")
     @Future(message = "A data de início deve ser no futuro")
-    @Column(name = "DataInicio")
     private LocalDateTime dataInicio;
 
     @NotNull(message = "A data de fim é obrigatória")
-    @Column(name = "DataFim")
     private LocalDateTime dataFim;
 
     @NotBlank(message = "O local é obrigatório")
-    @Column(name = "Local")
     private String local;
 
     @NotNull(message = "A capacidade máxima é obrigatória")
     @Positive(message = "A capacidade máxima deve ser positiva")
-    @Column(name = "CapacidadeMaxima")
     private Integer capacidadeMaxima;
 
     @NotNull(message = "O estado ativo é obrigatório")
-    @Column(name = "EstaAtivo")
     private Boolean estaAtivo;
 }
