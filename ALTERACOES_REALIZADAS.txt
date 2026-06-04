@@ -1,0 +1,702 @@
+================================================================================
+DOCUMENTO DE ALTERAÇÕES REALIZADAS - APOIO EVENTOS
+================================================================================
+Data: 04/06/2026
+Projeto: Sistema de Apoio a Eventos Académicos
+================================================================================
+
+RESUMO GERAL
+------------
+Este documento detalha todas as adições e alterações realizadas no projeto
+desde o início, incluindo justificativas e impactos no código.
+
+================================================================================
+FASE 1: CONFIGURAÇÃO INICIAL E CONEXÃO COM BASE DE DADOS
+================================================================================
+
+1. CONFIGURAÇÃO DO application.properties
+-------------------------------------------
+ALTERAÇÃO: Configuração da conexão com MySQL
+ARQUIVO: src/main/resources/application.properties
+
+ALTERAÇÕES REALIZADAS:
+- Configuração da URL de conexão com MySQL (jdbc:mysql://localhost:3306/eventos_academicos)
+- Definição do usuário (root) e senha (vazia para XAMPP)
+- Configuração do driver MySQL (com.mysql.cj.jdbc.Driver)
+- Configuração do ddl-auto inicialmente como "update", depois alterado para "validate"
+- Ativação do show-sql para debug
+- Configuração da estratégia de naming (PhysicalNamingStrategyStandardImpl)
+
+JUSTIFICATIVA:
+- Necessário conectar a aplicação Spring Boot com a base de dados MySQL
+- O ddl-auto="update" permitia criar tabelas automaticamente, mas foi alterado
+  para "validate" para evitar alterações não intencionais no esquema existente
+- show-sql ajuda a debugar queries SQL durante desenvolvimento
+
+IMPACTO:
+- Permite persistência de dados através de JPA/Hibernate
+- Validação automática do esquema da base de dados
+- Visibilidade das queries SQL geradas pelo Hibernate
+
+
+2. IMPORTAÇÃO DO DUMP SQL
+--------------------------
+ALTERAÇÃO: Correção e importação do dump SQL
+ARQUIVO: database-dump.sql
+
+ALTERAÇÕES REALIZADAS:
+- Correção de sintaxe SQL para compatibilidade com MySQL Workbench
+- Remoção de caracteres problemáticos e ajuste de encoding
+- Importação da base de dados "eventos_academicos" no MySQL
+
+JUSTIFICATIVA:
+- O dump original continha erros de sintaxe que impediam a importação
+- Necessário ter dados de teste para validar a aplicação
+
+IMPACTO:
+- Criação de todas as tabelas necessárias (Evento, Participante, Inscricao, Sessao, Certificado)
+- Dados de exemplo para testar a aplicação
+- Estrutura relacional com foreign keys configuradas
+
+
+3. VALIDAÇÃO DA CONEXÃO
+------------------------
+ALTERAÇÃO: Teste de conexão e verificação de startup
+AÇÃO: Execução da aplicação para verificar conexão com a base de dados
+
+JUSTIFICATIVA:
+- Garantir que a configuração está correta antes de prosseguir
+- Verificar se o Hibernate consegue conectar e validar o esquema
+
+IMPACTO:
+- Confirmação de que a aplicação consegue se conectar ao MySQL
+- Validação do mapeamento ORM das entidades
+
+================================================================================
+FASE 2: VALIDAÇÃO E TRATAMENTO DE ERROS
+================================================================================
+
+4. ADIÇÃO DE BEAN VALIDATION NAS ENTIDADES
+---------------------------------------------
+ALTERAÇÃO: Adição de anotações de validação Jakarta Bean Validation
+ARQUIVOS: 
+- src/main/java/com/eventos/apoio/model/Evento.java
+- src/main/java/com/eventos/apoio/model/Participante.java
+- src/main/java/com/eventos/apoio/model/Inscricao.java
+- src/main/java/com/eventos/apoio/model/Sessao.java
+- src/main/java/com/eventos/apoio/model/Certificado.java
+
+ALTERAÇÕES REALIZADAS:
+- @NotBlank: Para campos obrigatórios de texto (nome, email, etc.)
+- @NotNull: Para campos obrigatórios não-texto (datas, enums)
+- @Size: Para limitar tamanho de strings (min/max)
+- @Email: Para validar formato de email
+- @Pattern: Para validar formato de telefone
+- @Future: Para garantir que datas de início sejam no futuro
+- @Positive: Para garantir valores positivos (capacidade)
+
+JUSTIFICATIVA:
+- Validação automática de dados na camada de API
+- Prevenir dados inválidos de entrarem no sistema
+- Melhorar a qualidade dos dados e UX com mensagens de erro claras
+
+IMPACTO:
+- Validação automática nos controllers com @Valid
+- Mensagens de erro personalizadas para cada campo
+- Redução de erros de dados inválidos na base de dados
+
+
+5. CRIAÇÃO DE EXCEÇÕES CUSTOMIZADAS
+------------------------------------
+ALTERAÇÃO: Criação de classes de exceção customizadas
+ARQUIVOS CRIADOS:
+- src/main/java/com/eventos/apoio/exception/ResourceNotFoundException.java
+- src/main/java/com/eventos/apoio/exception/BusinessException.java
+
+ResourceNotFoundException:
+- Exceção para quando um recurso não é encontrado pelo ID
+- Construtor que aceita nome do recurso e ID
+- Mensagem formatada: "{recurso} não encontrado com id: {id}"
+
+BusinessException:
+- Exceção para erros de regras de negócio
+- Usada para violações de regras específicas do domínio
+- Mensagem customizável
+
+JUSTIFICATIVA:
+- Tratamento diferenciado de diferentes tipos de erros
+- Mensagens de erro mais claras e específicas
+- Permite tratamento centralizado no GlobalExceptionHandler
+
+IMPACTO:
+- Separação clara entre erros de recurso e erros de negócio
+- Melhor experiência do usuário com mensagens específicas
+- Facilita o debugging e logging
+
+
+6. CRIAÇÃO DO GLOBAL EXCEPTION HANDLER
+--------------------------------------
+ALTERAÇÃO: Criação de handler centralizado de exceções
+ARQUIVO: src/main/java/com/eventos/apoio/exception/GlobalExceptionHandler.java
+
+ALTERAÇÕES REALIZADAS:
+- @ControllerAdvice para interceptar exceções globalmente
+- @ExceptionHandler para ResourceNotFoundException (HTTP 404)
+- @ExceptionHandler para BusinessException (HTTP 400)
+- @ExceptionHandler para MethodArgumentNotValidException (HTTP 400)
+- @ExceptionHandler para Exception (HTTP 500)
+- Respostas padronizadas com mensagem e timestamp
+
+JUSTIFICATIVA:
+- Tratamento centralizado de erros evita código repetido
+- Respostas HTTP consistentes para diferentes tipos de erro
+- Evita exposição de stack traces para o cliente
+- Facilita manutenção e adição de novos handlers
+
+IMPACTO:
+- Todas as exceções são tratadas de forma consistente
+- Respostas JSON padronizadas com mensagens claras
+- Melhor UX com códigos HTTP apropriados
+- Redução de código boilerplate nos controllers
+
+================================================================================
+FASE 3: REGRAS DE NEGÓCIO
+================================================================================
+
+7. IMPLEMENTAÇÃO DE REGRAS NO INSCRICAO SERVICE
+-------------------------------------------------
+ALTERAÇÃO: Adição de validações de negócio no InscricaoService
+ARQUIVO: src/main/java/com/eventos/apoio/service/InscricaoService.java
+
+ALTERAÇÕES REALIZADAS:
+- Validação de capacidade máxima do evento
+- Verificação de inscrição duplicada (mesmo participante no mesmo evento)
+- Estado padrão "Pendente" para novas inscrições
+- Lançamento de BusinessException para violações
+
+JUSTIFICATIVA:
+- Garantir que um evento não excede sua capacidade máxima
+- Evitar inscrições duplicadas do mesmo participante
+- Implementar fluxo de aprovação de inscrições
+- Manter integridade dos dados de negócio
+
+IMPACTO:
+- Eventos não podem ter mais inscrições que a capacidade
+- Um participante só pode se inscrever uma vez por evento
+- Fluxo de aprovação com estados (Pendente -> Confirmada/Cancelada)
+- Proteção contra dados inconsistentes
+
+
+8. IMPLEMENTAÇÃO DE REGRAS NO CERTIFICADO SERVICE
+---------------------------------------------------
+ALTERAÇÃO: Adição de validações de negócio no CertificadoService
+ARQUIVO: src/main/java/com/eventos/apoio/service/CertificadoService.java
+
+ALTERAÇÕES REALIZADAS:
+- Verificação de que a inscrição está confirmada antes de emitir certificado
+- Verificação de que não existe certificado para a inscrição
+- Geração automática de código único para certificado
+- Data de emissão automática (NOW())
+
+JUSTIFICATIVA:
+- Certificados só devem ser emitidos para inscrições confirmadas
+- Evitar emissão de múltiplos certificados para a mesma inscrição
+- Geração automática de códigos únicos para rastreamento
+- Registro automático da data de emissão
+
+IMPACTO:
+- Garantia de que apenas inscrições confirmadas recebem certificados
+- Um certificado por inscrição
+- Códigos únicos para verificação de autenticidade
+- Registro temporal de emissão
+
+
+9. ADIÇÃO DE MÉTODOS CUSTOMIZADOS NO INSCRICAO REPOSITORY
+-----------------------------------------------------------
+ALTERAÇÃO: Adição de métodos de consulta customizados
+ARQUIVO: src/main/java/com/eventos/apoio/repository/InscricaoRepository.java
+
+ALTERAÇÕES REALIZADAS:
+- long countByEventoId(Integer eventoId): Conta inscrições por evento
+- boolean existsByParticipanteIdAndEventoId(Integer participanteId, Integer eventoId): 
+  Verifica se participante já está inscrito no evento
+
+JUSTIFICATIVA:
+- Necessário implementar validações de negócio no service
+- Spring Data JPA gera queries automaticamente a partir do nome do método
+- Evita escrita manual de queries JPQL ou SQL
+
+IMPACTO:
+- Validações de capacidade e duplicidade implementadas
+- Queries otimizadas pelo Spring Data JPA
+- Código mais limpo e manutenível
+
+
+10. ADIÇÃO DE MÉTODO CUSTOMIZADO NO CERTIFICADO REPOSITORY
+-----------------------------------------------------------
+ALTERAÇÃO: Adição de método de consulta customizado
+ARQUIVO: src/main/java/com/eventos/apoio/repository/CertificadoRepository.java
+
+ALTERAÇÕES REALIZADAS:
+- boolean existsByInscricaoId(Integer inscricaoId): 
+  Verifica se já existe certificado para a inscrição
+
+JUSTIFICATIVA:
+- Necessário evitar emissão de certificados duplicados
+- Validação de unicidade de certificado por inscrição
+
+IMPACTO:
+- Garantia de um certificado por inscrição
+- Validação de unicidade implementada
+
+================================================================================
+FASE 4: CONFIGURAÇÃO CORS
+================================================================================
+
+11. ADIÇÃO DE CONFIGURAÇÃO CORS
+---------------------------------
+ALTERAÇÃO: Criação de configuração CORS
+ARQUIVO: src/main/java/com/eventos/apoio/config/CorsConfig.java
+
+ALTERAÇÕES REALIZADAS:
+- @Configuration para classe de configuração
+- @Bean para CorsConfigurationSource
+- Permissão de origens: http://localhost:3000, http://localhost:4200, http://localhost:8080
+- Permissão de métodos: GET, POST, PUT, DELETE, OPTIONS
+- Permissão de headers: Authorization, Content-Type, Accept
+- Exposição de headers: Authorization
+
+JUSTIFICATIVA:
+- Permitir que frontend (React, Angular, etc.) consuma a API
+- Desenvolvimento local com diferentes portas
+- Necessário para evitar erros de CORS no navegador
+
+IMPACTO:
+- Frontend pode consumir a API sem erros de CORS
+- Suporte a múltiplas origens para desenvolvimento
+- Métodos HTTP permitidos para operações CRUD completas
+
+================================================================================
+FASE 5: MÉTODOS CRUD COMPLETOS
+================================================================================
+
+12. ADIÇÃO DE MÉTODOS BUSCAR POR ID NOS SERVICES
+-------------------------------------------------
+ALTERAÇÃO: Adição de método buscarPorId em todos os services
+ARQUIVOS:
+- EventoService.java
+- ParticipanteService.java
+- InscricaoService.java
+- SessaoService.java
+- CertificadoService.java
+
+ALTERAÇÕES REALIZADAS:
+- public Evento buscarPorId(Integer id)
+- public Participante buscarPorId(Integer id)
+- public Inscricao buscarPorId(Integer id)
+- public Sessao buscarPorId(Integer id)
+- public Certificado buscarPorId(Integer id)
+- Lançamento de ResourceNotFoundException se não encontrado
+
+JUSTIFICATIVA:
+- Necessário para endpoint GET /{id} nos controllers
+- Validação de existência antes de atualizar ou deletar
+- Reutilização em outros métodos do service
+
+IMPACTO:
+- Recuperação individual de recursos por ID
+- Tratamento de erro 404 automático
+- Reutilização de código nos métodos atualizar e deletar
+
+
+13. ADIÇÃO DE MÉTODOS ATUALIZAR NOS SERVICES
+--------------------------------------------
+ALTERAÇÃO: Adição de método atualizar em todos os services
+ARQUIVOS:
+- EventoService.java
+- ParticipanteService.java
+- InscricaoService.java
+- SessaoService.java
+
+ALTERAÇÕES REALIZADAS:
+- public Evento atualizar(Integer id, Evento evento)
+- public Participante atualizar(Integer id, Participante participante)
+- public Inscricao atualizar(Integer id, Inscricao inscricao)
+- public Sessao atualizar(Integer id, Sessao sessao)
+- Busca do recurso existente, atualização de campos e save
+
+JUSTIFICATIVA:
+- Necessário para endpoint PUT /{id} nos controllers
+- Padrão de atualização: buscar -> modificar -> salvar
+- Garantia de que o recurso existe antes de atualizar
+
+IMPACTO:
+- Atualização completa de recursos
+- Validação de existência automática
+- Manutenção do ID e campos gerados automaticamente
+
+
+14. ADIÇÃO DE MÉTODOS DELETAR NOS SERVICES
+------------------------------------------
+ALTERAÇÃO: Adição de método deletar em todos os services
+ARQUIVOS:
+- EventoService.java
+- ParticipanteService.java
+- InscricaoService.java
+- SessaoService.java
+- CertificadoService.java
+
+ALTERAÇÕES REALIZADAS:
+- public void deletar(Integer id)
+- Busca do recurso existente e deleção
+- CertificadoService não tem método atualizar (certificados não devem ser alterados)
+
+JUSTIFICATIVA:
+- Necessário para endpoint DELETE /{id} nos controllers
+- Validação de existência antes de deletar
+- Certificados são imutáveis (apenas criação e deleção)
+
+IMPACTO:
+- Remoção de recursos por ID
+- Validação de existência automática
+- Garantia de integridade referencial pelo JPA
+
+
+15. ADIÇÃO DE ENDPOINTS NOS CONTROLLERS
+---------------------------------------
+ALTERAÇÃO: Adição de endpoints GET por ID, PUT e DELETE
+ARQUIVOS:
+- EventoController.java
+- ParticipanteController.java
+- InscricaoController.java
+- SessaoController.java
+- CertificadoController.java
+
+ALTERAÇÕES REALIZADAS:
+- @GetMapping("/{id}") -> buscarPorId
+- @PutMapping("/{id}") -> atualizar (exceto Certificado)
+- @DeleteMapping("/{id}") -> deletar
+- Uso de @Valid para validação de DTOs
+- Respostas HTTP apropriadas (200, 204, 404)
+
+JUSTIFICATIVA:
+- Implementação completa de CRUD RESTful
+- Validação automática de dados de entrada
+- Respostas HTTP semânticas
+
+IMPACTO:
+- API RESTful completa com todas as operações CRUD
+- Validação automática nos endpoints
+- Tratamento de erros centralizado
+
+================================================================================
+FASE 6: IMPLEMENTAÇÃO DE DTOS E MAPPER
+================================================================================
+
+16. CRIAÇÃO DE DTOs (DATA TRANSFER OBJECTS)
+---------------------------------------------
+ALTERAÇÃO: Criação de DTOs para separar entidades da API
+ARQUIVOS CRIADOS:
+- src/main/java/com/eventos/apoio/dto/EventoDTO.java
+- src/main/java/com/eventos/apoio/dto/ParticipanteDTO.java
+- src/main/java/com/eventos/apoio/dto/InscricaoDTO.java
+- src/main/java/com/eventos/apoio/dto/SessaoDTO.java
+- src/main/java/com/eventos/apoio/dto/CertificadoDTO.java
+
+EventoDTO:
+- Campos: id (Integer), nome, descricao, dataInicio, dataFim, local, 
+  capacidadeMaxima, estaAtivo
+- Validações: @NotBlank, @Size, @NotNull, @Future, @Positive
+
+ParticipanteDTO:
+- Campos: id (Integer), nome, email, telefone, numeroEstudante, curso
+- Validações: @NotBlank, @Size, @Email, @Pattern
+
+InscricaoDTO:
+- Campos: id (Integer), dataInscricao, estadoInscricao, participanteId, eventoId
+- Validações: @NotNull
+- IDs para relações em vez de objetos
+
+SessaoDTO:
+- Campos: id (Integer), titulo, nomeOrador, dataHoraInicio, dataHoraFim, eventoId
+- Validações: @NotBlank, @Size, @NotNull
+
+CertificadoDTO:
+- Campos: id (Integer), codigoCertificado, dataEmissao, inscricaoId
+- Validações: @NotBlank, @Size, @NotNull
+- ID para relação em vez de objeto
+
+JUSTIFICATIVA:
+- Separar camada de API da camada de persistência
+- Expor apenas dados necessários para o cliente
+- Validação específica para dados de entrada
+- Evitar exposição de informações sensíveis ou internas
+- IDs para relações em vez de objetos para simplificar JSON
+
+IMPACTO:
+- Desacoplamento entre API e entidades
+- Validação específica para dados de entrada
+- JSON mais limpo e controlado
+- Proteção contra modificação de campos internos
+- Melhor manutenibilidade e testabilidade
+
+
+17. CRIAÇÃO DE MAPPER CLASSES
+------------------------------
+ALTERAÇÃO: Criação de classes Mapper para conversão entre Entidades e DTOs
+ARQUIVOS CRIADOS:
+- src/main/java/com/eventos/apoio/mapper/EventoMapper.java
+- src/main/java/com/eventos/apoio/mapper/ParticipanteMapper.java
+- src/main/java/com/eventos/apoio/mapper/InscricaoMapper.java
+- src/main/java/com/eventos/apoio/mapper/SessaoMapper.java
+- src/main/java/com/eventos/apoio/mapper/CertificadoMapper.java
+
+EventoMapper:
+- toDTO(Evento): Converte entidade para DTO
+- toEntity(EventoDTO): Converte DTO para entidade
+- @Component para injeção de dependência
+
+ParticipanteMapper:
+- toDTO(Participante): Converte entidade para DTO
+- toEntity(ParticipanteDTO): Converte DTO para entidade
+- @Component para injeção de dependência
+
+InscricaoMapper:
+- toDTO(Inscricao): Converte entidade para DTO
+- toEntity(InscricaoDTO): Converte DTO para entidade
+- Injeção de EventoRepository e ParticipanteRepository
+- Resolução de relações por ID (participanteId, eventoId)
+- @Component para injeção de dependência
+
+SessaoMapper:
+- toDTO(Sessao): Converte entidade para DTO
+- toEntity(SessaoDTO): Converte DTO para entidade
+- Injeção de EventoRepository
+- Resolução de relação por ID (eventoId)
+- @Component para injeção de dependência
+
+CertificadoMapper:
+- toDTO(Certificado): Converte entidade para DTO
+- toEntity(CertificadoDTO): Converte DTO para entidade
+- Injeção de InscricaoRepository
+- Resolução de relação por ID (inscricaoId)
+- @Component para injeção de dependência
+
+JUSTIFICATIVA:
+- Centralizar lógica de conversão entre entidades e DTOs
+- Reutilização de código de conversão
+- Separação de responsabilidades
+- Resolução de relações por ID para evitar ciclos de serialização
+- Facilitar testes unitários
+
+IMPACTO:
+- Conversão consistente entre entidades e DTOs
+- Resolução de relações por ID evitando problemas de serialização
+- Código mais limpo e manutenível
+- Facilita testes (pode-se mockar mappers)
+- Evita exposição de entidades JPA diretamente na API
+
+
+18. ATUALIZAÇÃO DOS CONTROLLERS PARA USAR DTOS
+----------------------------------------------
+ALTERAÇÃO: Refatoração de controllers para usar DTOs e Mappers
+ARQUIVOS:
+- EventoController.java
+- ParticipanteController.java
+- InscricaoController.java
+- SessaoController.java
+- CertificadoController.java
+
+ALTERAÇÕES REALIZADAS:
+- Injeção de Mapper correspondente no controller
+- @PostMapping: @RequestBody com DTO, mapper.toEntity, service.salvar, mapper.toDTO
+- @GetMapping("/{id}"): service.buscarPorId, mapper.toDTO
+- @PutMapping("/{id}"): @RequestBody com DTO, mapper.toEntity, service.atualizar, mapper.toDTO
+- @DeleteMapping("/{id}): service.deletar
+- @Valid nos DTOs para validação automática
+- @PathVariable Integer id em vez de Long
+
+JUSTIFICATIVA:
+- Separar camada de API da camada de persistência
+- Validação específica para dados de entrada
+- Expor apenas dados necessários ao cliente
+- Evitar exposição de entidades JPA
+- Manter Integer para IDs para compatibilidade com base de dados existente
+
+IMPACTO:
+- API mais limpa e controlada
+- Validação automática de dados de entrada
+- Proteção contra modificação de campos internos
+- Desacoplamento entre API e persistência
+- Compatibilidade mantida com base de dados existente
+
+
+19. ATUALIZAÇÃO DOS REPOSITORIES PARA USAR INTEGER
+--------------------------------------------------
+ALTERAÇÃO: Mudança de tipo de ID de Long para Integer em repositories
+ARQUIVOS:
+- EventoRepository.java
+- ParticipanteRepository.java
+- InscricaoRepository.java
+- SessaoRepository.java
+- CertificadoRepository.java
+
+ALTERAÇÕES REALIZADAS:
+- JpaRepository<Entidade, Long> -> JpaRepository<Entidade, Integer>
+- countByEventoId(Long) -> countByEventoId(Integer)
+- existsByParticipanteIdAndEventoId(Long, Long) -> existsByParticipanteIdAndEventoId(Integer, Integer)
+- existsByInscricaoId(Long) -> existsByInscricaoId(Integer)
+
+JUSTIFICATIVA:
+- Base de dados existente usa INT para IDs
+- Compatibilidade com esquema atual sem necessidade de migração
+- Evitar erros de validação do Hibernate
+
+IMPACTO:
+- Compatibilidade total com base de dados existente
+- Validação do esquema bem-sucedida com ddl-auto=validate
+- Sem necessidade de alterar estrutura da base de dados
+
+
+20. ATUALIZAÇÃO DOS SERVICES PARA USAR INTEGER
+---------------------------------------------
+ALTERAÇÃO: Mudança de tipo de ID de Long para Integer em services
+ARQUIVOS:
+- EventoService.java
+- ParticipanteService.java
+- InscricaoService.java
+- SessaoService.java
+- CertificadoService.java
+
+ALTERAÇÕES REALIZADAS:
+- buscarPorId(Long id) -> buscarPorId(Integer id)
+- atualizar(Long id, ...) -> atualizar(Integer id, ...)
+- deletar(Long id) -> deletar(Integer id)
+- Remoção de conversões Long.valueOf(id) desnecessárias
+
+JUSTIFICATIVA:
+- Consistência com repositories e entidades
+- Compatibilidade com base de dados existente
+- Evitar conversões desnecessárias entre tipos
+
+IMPACTO:
+- Consistência de tipos em toda a aplicação
+- Código mais limpo sem conversões desnecessárias
+- Compatibilidade mantida com base de dados
+
+
+21. ATUALIZAÇÃO DOS CONTROLLERS PARA USAR INTEGER
+-------------------------------------------------
+ALTERAÇÃO: Mudança de tipo de ID de Long para Integer em controllers
+ARQUIVOS:
+- EventoController.java
+- ParticipanteController.java
+- InscricaoController.java
+- SessaoController.java
+- CertificadoController.java
+
+ALTERAÇÕES REALIZADAS:
+- @PathVariable Long id -> @PathVariable Integer id
+
+JUSTIFICATIVA:
+- Consistência com services e repositories
+- Compatibilidade com base de dados existente
+
+IMPACTO:
+- Consistência de tipos em toda a aplicação
+- API coerente com tipos Integer para IDs
+
+
+22. ATUALIZAÇÃO DA RESOURCE NOT FOUND EXCEPTION
+------------------------------------------------
+ALTERAÇÃO: Mudança de tipo de ID de Long para Integer
+ARQUIVO: src/main/java/com/eventos/apoio/exception/ResourceNotFoundException.java
+
+ALTERAÇÕES REALIZADAS:
+- ResourceNotFoundException(String resourceName, Long id) -> 
+  ResourceNotFoundException(String resourceName, Integer id)
+
+JUSTIFICATIVA:
+- Consistência com o resto da aplicação
+- Compatibilidade com base de dados existente
+
+IMPACTO:
+- Consistência de tipos em toda a aplicação
+- Exceções funcionam corretamente com Integer
+
+
+23. ALTERAÇÃO DO DDL-AUTO PARA VALIDATE
+-----------------------------------------
+ALTERAÇÃO: Mudança de ddl-auto de "update" para "validate"
+ARQUIVO: src/main/resources/application.properties
+
+ALTERAÇÕES REALIZADAS:
+- spring.jpa.hibernate.ddl-auto=update -> spring.jpa.hibernate.ddl-auto=validate
+
+JUSTIFICATIVA:
+- "update" tentava alterar o esquema automaticamente, causando erros
+- "validate" apenas valida o esquema sem alterações
+- Proteção contra alterações não intencionais na base de dados
+
+IMPACTO:
+- Validação do esquema sem alterações
+- Proteção da estrutura da base de dados
+- Evita erros de constraint durante startup
+
+================================================================================
+RESUMO DE IMPACTOS
+================================================================================
+
+ARQUITETURA:
+- Separação clara entre camadas (Controller -> Service -> Repository)
+- DTOs para desacoplar API de persistência
+- Mappers para conversão entre entidades e DTOs
+- Tratamento centralizado de exceções
+
+SEGURANÇA:
+- Validação automática de dados de entrada
+- Proteção contra dados inválidos
+- Exposição controlada de dados via DTOs
+
+MANUTENIBILIDADE:
+- Código mais limpo e organizado
+- Separação de responsabilidades
+- Reutilização de código (mappers, handlers)
+- Facilidade de testes
+
+COMPATIBILIDADE:
+- Mantida compatibilidade com base de dados existente
+- Integer para IDs para compatibilidade com MySQL INT
+- Validação de esquema sem alterações
+
+PERFORMANCE:
+- Queries otimizadas pelo Spring Data JPA
+- Validação automática sem overhead significativo
+- Conversão eficiente entre DTOs e entidades
+
+================================================================================
+ESTADO ATUAL
+================================================================================
+
+A aplicação está funcionando corretamente com:
+- Conexão estabelecida com MySQL
+- Todas as entidades mapeadas e validadas
+- DTOs implementados para todas as entidades
+- Mappers criados para conversão
+- Controllers refatorados para usar DTOs
+- Validação automática de dados
+- Tratamento centralizado de exceções
+- Regras de negócio implementadas
+- CORS configurado
+- CRUD completo implementado
+
+Próximos passos sugeridos:
+- Adicionar documentação Swagger/OpenAPI
+- Implementar testes unitários para services
+- Adicionar buscas customizadas nos repositories
+- Implementar autenticação e autorização
+- Adicionar logging estruturado
+
+================================================================================
+FIM DO DOCUMENTO
+================================================================================

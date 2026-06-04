@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eventos - Apoio a Eventos Académicos</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1>Apoio a Eventos Académicos</h1>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Dashboard</a>
+                <a href="/eventos" class="nav-link active">Eventos</a>
+                <a href="/participantes" class="nav-link">Participantes</a>
+                <a href="/inscricoes" class="nav-link">Inscrições</a>
+                <a href="/sessoes" class="nav-link">Sessões</a>
+                <a href="/certificados" class="nav-link">Certificados</a>
+                <a href="/logout" class="nav-link logout">Sair</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="page-header">
+            <h2>Eventos</h2>
+            <a href="/eventos/novo" class="btn btn-primary">Criar Novo Evento</a>
+        </div>
+        
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Descrição</th>
+                        <th>Data Início</th>
+                        <th>Data Fim</th>
+                        <th>Local</th>
+                        <th>Capacidade</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="eventosTableBody">
+                    <!-- Eventos serão carregados via JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script th:src="@{/js/eventos.js}"></script>
+</body>
+</html>

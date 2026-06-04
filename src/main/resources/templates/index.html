@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Apoio a Eventos Académicos</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1>Apoio a Eventos Académicos</h1>
+            <div class="nav-links">
+                <a href="/eventos" class="nav-link">Eventos</a>
+                <a href="/participantes" class="nav-link">Participantes</a>
+                <a href="/inscricoes" class="nav-link">Inscrições</a>
+                <a href="/sessoes" class="nav-link">Sessões</a>
+                <a href="/certificados" class="nav-link">Certificados</a>
+                <a href="/logout" class="nav-link logout">Sair</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="dashboard">
+            <h2>Bem-vindo ao Sistema de Apoio a Eventos Académicos</h2>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Eventos</h3>
+                    <p class="stat-number" id="totalEventos">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Participantes</h3>
+                    <p class="stat-number" id="totalParticipantes">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Inscrições</h3>
+                    <p class="stat-number" id="totalInscricoes">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Certificados</h3>
+                    <p class="stat-number" id="totalCertificados">0</p>
+                </div>
+            </div>
+            
+            <div class="quick-actions">
+                <h3>Ações Rápidas</h3>
+                <a href="/eventos/novo" class="btn btn-primary">Criar Novo Evento</a>
+                <a href="/participantes/novo" class="btn btn-secondary">Cadastrar Participante</a>
+                <a href="/inscricoes/nova" class="btn btn-success">Nova Inscrição</a>
+            </div>
+        </div>
+    </div>
+    
+    <script th:src="@{/js/dashboard.js}"></script>
+</body>
+</html>
