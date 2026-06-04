@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sessões - Apoio a Eventos Académicos</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1>Apoio a Eventos Académicos</h1>
+            <div class="nav-links">
+                <a href="/">Dashboard</a>
+                <a href="/eventos">Eventos</a>
+                <a href="/participantes">Participantes</a>
+                <a href="/inscricoes">Inscrições</a>
+                <a href="/sessoes" class="active">Sessões</a>
+                <a href="/certificados">Certificados</a>
+                <a href="/logout">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h2>Sessões</h2>
+            <button onclick="window.location.href='/sessoes/nova'" class="btn btn-primary">Nova Sessão</button>
+        </div>
+
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Título</th>
+                    <th>Orador</th>
+                    <th>Data Início</th>
+                    <th>Data Fim</th>
+                    <th>Evento</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="sessoesTable">
+                <!-- Dados serão carregados via JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <script th:src="@{/js/sessoes.js}"></script>
+</body>
+</html>

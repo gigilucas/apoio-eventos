@@ -12,13 +12,7 @@
             <h1>Apoio a Eventos Académicos</h1>
             <h2>Login</h2>
             
-            <div th:if="${param.error}" class="error-message">
-                Credenciais inválidas
-            </div>
-            
-            <div th:if="${param.logout}" class="success-message">
-                Logout realizado com sucesso
-            </div>
+            <div id="errorMessage" class="error-message" style="display: none;"></div>
             
             <form id="loginForm">
                 <div class="form-group">
@@ -34,7 +28,9 @@
                 <button type="submit" class="btn btn-primary">Entrar</button>
             </form>
             
-            <div id="errorMessage" class="error-message" style="display: none;"></div>
+            <p style="text-align: center; margin-top: 1rem;">
+                Não tem conta? <a href="/register">Criar conta</a>
+            </p>
         </div>
     </div>
     

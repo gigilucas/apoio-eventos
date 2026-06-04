@@ -25,8 +25,8 @@ public class UserPrincipal implements UserDetails {
         return new UserPrincipal(
                 participante.getId(),
                 participante.getEmail(),
-                participante.getNumeroEstudante(), // Usando numeroEstudante como senha temporariamente
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
+                participante.getPassword(),
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + participante.getRole().name()))
         );
     }
 

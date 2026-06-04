@@ -25,7 +25,7 @@ public class Participante {
 
     @NotBlank(message = "O email é obrigatório")
     @Email(message = "O email deve ser válido")
-    @Column(name = "Email")
+    @Column(name = "Email", unique = true)
     private String email;
 
     @Pattern(regexp = "^[+]?[0-9]{9,15}$", message = "O telefone deve ter entre 9 e 15 dígitos")
@@ -39,4 +39,13 @@ public class Participante {
     @Size(max = 255, message = "O curso não pode ter mais de 255 caracteres")
     @Column(name = "Curso")
     private String curso;
+
+    @NotBlank(message = "A senha é obrigatória")
+    @Size(min = 6, message = "A senha deve ter pelo menos 6 caracteres")
+    @Column(name = "Password")
+    private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "Role")
+    private Role role = Role.USER;
 }

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificados - Apoio a Eventos Académicos</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1>Apoio a Eventos Académicos</h1>
+            <div class="nav-links">
+                <a href="/">Dashboard</a>
+                <a href="/eventos">Eventos</a>
+                <a href="/participantes">Participantes</a>
+                <a href="/inscricoes">Inscrições</a>
+                <a href="/sessoes">Sessões</a>
+                <a href="/certificados" class="active">Certificados</a>
+                <a href="/logout">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h2>Certificados</h2>
+            <button onclick="window.location.href='/certificados/novo'" class="btn btn-primary">Novo Certificado</button>
+        </div>
+
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Código</th>
+                    <th>Data Emissão</th>
+                    <th>Inscrição</th>
+                    <th>Participante</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="certificadosTable">
+                <!-- Dados serão carregados via JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <script th:src="@{/js/certificados.js}"></script>
+</body>
+</html>

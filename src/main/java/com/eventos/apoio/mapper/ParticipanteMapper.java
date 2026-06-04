@@ -18,6 +18,8 @@ public class ParticipanteMapper {
         dto.setTelefone(participante.getTelefone());
         dto.setNumeroEstudante(participante.getNumeroEstudante());
         dto.setCurso(participante.getCurso());
+        dto.setPassword(participante.getPassword());
+        dto.setRole(participante.getRole());
         return dto;
     }
 
@@ -32,6 +34,8 @@ public class ParticipanteMapper {
         participante.setTelefone(dto.getTelefone());
         participante.setNumeroEstudante(dto.getNumeroEstudante());
         participante.setCurso(dto.getCurso());
+        participante.setPassword(dto.getPassword());
+        participante.setRole(dto.getRole());
         return participante;
     }
 }

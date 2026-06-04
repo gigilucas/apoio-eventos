@@ -11,6 +11,11 @@ public class WebController {
         return "login";
     }
 
+    @GetMapping("/register")
+    public String register() {
+        return "register";
+    }
+
     @GetMapping({"/", "/dashboard"})
     public String index() {
         return "index";
@@ -21,14 +26,29 @@ public class WebController {
         return "eventos";
     }
 
+    @GetMapping("/eventos/novo")
+    public String novoEvento() {
+        return "evento-novo";
+    }
+
     @GetMapping("/participantes")
     public String participantes() {
         return "participantes";
     }
 
+    @GetMapping("/participantes/novo")
+    public String novoParticipante() {
+        return "participante-novo";
+    }
+
     @GetMapping("/inscricoes")
     public String inscricoes() {
         return "inscricoes";
+    }
+
+    @GetMapping("/inscricoes/nova")
+    public String novaInscricao() {
+        return "inscricao-nova";
     }
 
     @GetMapping("/sessoes")

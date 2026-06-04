@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novo Evento - Apoio a Eventos Académicos</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1>Apoio a Eventos Académicos</h1>
+            <div class="nav-links">
+                <a href="/">Dashboard</a>
+                <a href="/eventos">Eventos</a>
+                <a href="/participantes">Participantes</a>
+                <a href="/inscricoes">Inscrições</a>
+                <a href="/sessoes">Sessões</a>
+                <a href="/certificados">Certificados</a>
+                <a href="/logout">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h2>Novo Evento</h2>
+            <a href="/eventos" class="btn btn-secondary">Voltar</a>
+        </div>
+
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+        <div id="successMessage" class="success-message" style="display: none;"></div>
+
+        <form id="eventoForm">
+            <div class="form-group">
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome" name="nome" required>
+            </div>
+
+            <div class="form-group">
+                <label for="descricao">Descrição:</label>
+                <textarea id="descricao" name="descricao" rows="4"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="dataInicio">Data Início:</label>
+                <input type="datetime-local" id="dataInicio" name="dataInicio" required>
+            </div>
+
+            <div class="form-group">
+                <label for="dataFim">Data Fim:</label>
+                <input type="datetime-local" id="dataFim" name="dataFim" required>
+            </div>
+
+            <div class="form-group">
+                <label for="local">Local:</label>
+                <input type="text" id="local" name="local" required>
+            </div>
+
+            <div class="form-group">
+                <label for="capacidadeMaxima">Capacidade Máxima:</label>
+                <input type="number" id="capacidadeMaxima" name="capacidadeMaxima" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Criar Evento</button>
+        </form>
+    </div>
+
+    <script th:src="@{/js/evento-novo.js}"></script>
+</body>
+</html>
