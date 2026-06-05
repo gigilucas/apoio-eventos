@@ -11,6 +11,7 @@
         <div class="nav-container">
             <h1>Apoio a Eventos Académicos</h1>
             <div class="nav-links">
+                <a href="/" class="nav-link">Dashboard</a>
                 <a href="/eventos" class="nav-link">Eventos</a>
                 <a href="/participantes" class="nav-link">Participantes</a>
                 <a href="/inscricoes" class="nav-link">Inscrições</a>
@@ -24,7 +25,7 @@
     <div class="container">
         <div class="page-header">
             <h2>Novo Evento</h2>
-            <a href="/eventos" class="btn btn-secondary">Voltar</a>
+            <a href="/eventos" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">Voltar</a>
         </div>
 
         <div id="errorMessage" class="error-message" style="display: none;"></div>
@@ -65,6 +66,7 @@
         </form>
     </div>
 
+    <script th:src="@{/js/common.js}"></script>
     <script th:src="@{/js/evento-novo.js}"></script>
 </body>
 </html>

@@ -65,4 +65,9 @@ public class WebController {
     public String logout() {
         return "redirect:/login";
     }
+
+    @PostMapping("/logout")
+    public String logoutPost() {
+        return "redirect:/login";
+    }
 }

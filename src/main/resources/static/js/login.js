@@ -34,6 +34,24 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
 // Verificar se já está logado
 window.addEventListener('load', function() {
     const token = localStorage.getItem('token');
+    const urlParams = new URLSearchParams(window.location.search);
+    const justLoggedOut = urlParams.get('logout');
+    const goingToRegister = sessionStorage.getItem('goingToRegister');
+    
+    // Se acabou de fazer logout, não redirecionar
+    if (justLoggedOut === 'true') {
+        // Limpar o parâmetro da URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+        return; // Não redirecionar
+    }
+    
+    // Se está a ir para registro, não redirecionar
+    if (goingToRegister === 'true') {
+        sessionStorage.removeItem('goingToRegister');
+        return; // Não redirecionar
+    }
+    
+    // Se tem token e não acabou de fazer logout nem está a ir para registro, redirecionar para dashboard
     if (token) {
         window.location.href = '/';
     }

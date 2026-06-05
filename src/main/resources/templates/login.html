@@ -29,11 +29,16 @@
             </form>
             
             <p style="text-align: center; margin-top: 1rem;">
-                Não tem conta? <a href="/register">Criar conta</a>
+                Não tem conta? <a href="/register" id="registerLink" style="color: #3498db; text-decoration: none; font-weight: 500;">Criar conta</a>
             </p>
         </div>
     </div>
     
+    <script>
+        document.getElementById('registerLink').addEventListener('click', function(e) {
+            sessionStorage.setItem('goingToRegister', 'true');
+        });
+    </script>
     <script th:src="@{/js/login.js}"></script>
 </body>
 </html>
