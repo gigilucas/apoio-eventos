@@ -16,9 +16,7 @@ document.getElementById('participanteForm').addEventListener('submit', async fun
     try {
         const response = await fetch('/api/participantes', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: getAuthHeaders(),
             body: JSON.stringify({ 
                 nome, 
                 email, 

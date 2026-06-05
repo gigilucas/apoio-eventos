@@ -4,7 +4,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function loadInscricoes() {
     try {
-        const response = await fetch('/api/inscricoes');
+        const response = await fetch('/api/inscricoes', {
+            headers: getAuthHeaders()
+        });
         if (response.ok) {
             const inscricoes = await response.json();
             renderInscricoes(inscricoes);
@@ -45,7 +47,8 @@ async function deleteInscricao(id) {
     
     try {
         const response = await fetch(`/api/inscricoes/${id}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: getAuthHeaders()
         });
         
         if (response.ok) {
@@ -60,7 +63,7 @@ async function deleteInscricao(id) {
 }
 
 function editInscricao(id) {
-    window.location.href = `/inscricoes/editar/${id}`;
+    window.location.href = `/inscricoes/editar?id=${id}`;
 }
 
 function showError(message) {

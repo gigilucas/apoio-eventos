@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Inscrição - Apoio a Eventos Académicos</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1>Apoio a Eventos Académicos</h1>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Dashboard</a>
+                <a href="/eventos" class="nav-link">Eventos</a>
+                <a href="/participantes" class="nav-link">Participantes</a>
+                <a href="/inscricoes" class="nav-link">Inscrições</a>
+                <a href="/sessoes" class="nav-link">Sessões</a>
+                <a href="/certificados" class="nav-link">Certificados</a>
+                <a href="/logout" class="nav-link logout">Sair</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h2>Editar Inscrição</h2>
+            <a href="/inscricoes" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">Voltar</a>
+        </div>
+
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+        <div id="successMessage" class="success-message" style="display: none;"></div>
+
+        <form id="inscricaoForm">
+            <div class="form-group">
+                <label for="participanteId">Participante:</label>
+                <select id="participanteId" name="participanteId" required>
+                    <option value="">Selecione um participante</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="eventoId">Evento:</label>
+                <select id="eventoId" name="eventoId" required>
+                    <option value="">Selecione um evento</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="estadoInscricao">Estado da Inscrição:</label>
+                <select id="estadoInscricao" name="estadoInscricao" required>
+                    <option value="Pendente">Pendente</option>
+                    <option value="Confirmada">Confirmada</option>
+                    <option value="Cancelada">Cancelada</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Atualizar Inscrição</button>
+        </form>
+    </div>
+
+    <script th:src="@{/js/common.js}"></script>
+    <script th:src="@{/js/inscricao-editar.js}"></script>
+</body>
+</html>

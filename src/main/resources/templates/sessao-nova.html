@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Sessão - Apoio a Eventos Académicos</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1>Apoio a Eventos Académicos</h1>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Dashboard</a>
+                <a href="/eventos" class="nav-link">Eventos</a>
+                <a href="/participantes" class="nav-link">Participantes</a>
+                <a href="/inscricoes" class="nav-link">Inscrições</a>
+                <a href="/sessoes" class="nav-link">Sessões</a>
+                <a href="/certificados" class="nav-link">Certificados</a>
+                <a href="/logout" class="nav-link logout">Sair</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h2>Nova Sessão</h2>
+            <a href="/sessoes" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">Voltar</a>
+        </div>
+
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+        <div id="successMessage" class="success-message" style="display: none;"></div>
+
+        <form id="sessaoForm">
+            <div class="form-group">
+                <label for="titulo">Título:</label>
+                <input type="text" id="titulo" name="titulo" required>
+            </div>
+
+            <div class="form-group">
+                <label for="nomeOrador">Nome do Orador:</label>
+                <input type="text" id="nomeOrador" name="nomeOrador" required>
+            </div>
+
+            <div class="form-group">
+                <label for="dataHoraInicio">Data e Hora Início:</label>
+                <input type="datetime-local" id="dataHoraInicio" name="dataHoraInicio" required>
+            </div>
+
+            <div class="form-group">
+                <label for="dataHoraFim">Data e Hora Fim:</label>
+                <input type="datetime-local" id="dataHoraFim" name="dataHoraFim" required>
+            </div>
+
+            <div class="form-group">
+                <label for="eventoId">Evento:</label>
+                <select id="eventoId" name="eventoId" required>
+                    <option value="">Selecione um evento</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Criar Sessão</button>
+        </form>
+    </div>
+
+    <script th:src="@{/js/common.js}"></script>
+    <script th:src="@{/js/sessao-nova.js}"></script>
+</body>
+</html>

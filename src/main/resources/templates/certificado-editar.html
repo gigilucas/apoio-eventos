@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Certificado - Apoio a Eventos Académicos</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1>Apoio a Eventos Académicos</h1>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Dashboard</a>
+                <a href="/eventos" class="nav-link">Eventos</a>
+                <a href="/participantes" class="nav-link">Participantes</a>
+                <a href="/inscricoes" class="nav-link">Inscrições</a>
+                <a href="/sessoes" class="nav-link">Sessões</a>
+                <a href="/certificados" class="nav-link">Certificados</a>
+                <a href="/logout" class="nav-link logout">Sair</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h2>Editar Certificado</h2>
+            <a href="/certificados" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">Voltar</a>
+        </div>
+
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+        <div id="successMessage" class="success-message" style="display: none;"></div>
+
+        <form id="certificadoForm">
+            <div class="form-group">
+                <label for="codigoCertificado">Código do Certificado:</label>
+                <input type="text" id="codigoCertificado" name="codigoCertificado" required>
+            </div>
+
+            <div class="form-group">
+                <label for="inscricaoId">Inscrição:</label>
+                <select id="inscricaoId" name="inscricaoId" required>
+                    <option value="">Selecione uma inscrição</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Atualizar Certificado</button>
+        </form>
+    </div>
+
+    <script th:src="@{/js/common.js}"></script>
+    <script th:src="@{/js/certificado-editar.js}"></script>
+</body>
+</html>

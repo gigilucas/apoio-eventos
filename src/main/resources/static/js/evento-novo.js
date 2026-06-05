@@ -17,9 +17,7 @@ document.getElementById('eventoForm').addEventListener('submit', async function(
     try {
         const response = await fetch('/api/eventos', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: getAuthHeaders(),
             body: JSON.stringify({ 
                 nome, 
                 descricao, 

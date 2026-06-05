@@ -1,6 +1,8 @@
 package com.eventos.apoio.mapper;
 
+import com.eventos.apoio.dto.EventoDTO;
 import com.eventos.apoio.dto.InscricaoDTO;
+import com.eventos.apoio.dto.ParticipanteDTO;
 import com.eventos.apoio.enums.EstadoInscricao;
 import com.eventos.apoio.model.Evento;
 import com.eventos.apoio.model.Inscricao;
@@ -14,10 +16,17 @@ public class InscricaoMapper {
 
     private final EventoRepository eventoRepository;
     private final ParticipanteRepository participanteRepository;
+    private final EventoMapper eventoMapper;
+    private final ParticipanteMapper participanteMapper;
 
-    public InscricaoMapper(EventoRepository eventoRepository, ParticipanteRepository participanteRepository) {
+    public InscricaoMapper(EventoRepository eventoRepository, 
+                          ParticipanteRepository participanteRepository,
+                          EventoMapper eventoMapper,
+                          ParticipanteMapper participanteMapper) {
         this.eventoRepository = eventoRepository;
         this.participanteRepository = participanteRepository;
+        this.eventoMapper = eventoMapper;
+        this.participanteMapper = participanteMapper;
     }
 
     public InscricaoDTO toDTO(Inscricao inscricao) {
@@ -30,9 +39,11 @@ public class InscricaoMapper {
         dto.setEstadoInscricao(inscricao.getEstadoInscricao());
         if (inscricao.getParticipante() != null) {
             dto.setParticipanteId(inscricao.getParticipante().getId());
+            dto.setParticipante(participanteMapper.toDTO(inscricao.getParticipante()));
         }
         if (inscricao.getEvento() != null) {
             dto.setEventoId(inscricao.getEvento().getId());
+            dto.setEvento(eventoMapper.toDTO(inscricao.getEvento()));
         }
         return dto;
     }

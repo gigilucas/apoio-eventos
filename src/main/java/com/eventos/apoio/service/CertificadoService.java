@@ -55,6 +55,33 @@ public class CertificadoService {
                 .orElseThrow(() -> new ResourceNotFoundException("Certificado", id));
     }
 
+    public Certificado atualizar(Integer id, Certificado certificado) {
+        Certificado certificadoExistente = buscarPorId(id);
+        
+        // Validar que a inscrição existe
+        Inscricao inscricao = inscricaoRepository.findById(certificado.getInscricao().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Inscrição", certificado.getInscricao().getId()));
+
+        // Validar que a inscrição está confirmada
+        if (inscricao.getEstadoInscricao() != EstadoInscricao.Confirmada) {
+            throw new BusinessException("Erro: Só é possível emitir certificados para inscrições confirmadas.");
+        }
+
+        // Validar que já não existe certificado para esta inscrição (se mudou a inscrição)
+        if (!certificadoExistente.getInscricao().getId().equals(inscricao.getId())) {
+            boolean certificadoExistenteNovaInscricao = certificadoRepository.existsByInscricaoId(inscricao.getId());
+            if (certificadoExistenteNovaInscricao) {
+                throw new BusinessException("Erro: Já existe um certificado para esta inscrição.");
+            }
+        }
+
+        certificadoExistente.setCodigoCertificado(certificado.getCodigoCertificado());
+        certificadoExistente.setInscricao(inscricao);
+        certificadoExistente.setDataEmissao(certificado.getDataEmissao());
+        
+        return certificadoRepository.save(certificadoExistente);
+    }
+
     public void deletar(Integer id) {
         Certificado certificado = buscarPorId(id);
         certificadoRepository.delete(certificado);

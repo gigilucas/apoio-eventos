@@ -20,6 +20,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller REST para autenticação e registro de utilizadores.
+ * Fornece endpoints para login e registro de novos utilizadores com JWT.
+ */
 @RestController
 @RequestMapping("/api/auth")
 @Tag(name = "Autenticação", description = "API para autenticação e registro de usuários")
@@ -30,6 +34,13 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider tokenProvider;
 
+    /**
+     * Construtor com injeção de dependências.
+     * @param authenticationManager Gerenciador de autenticação do Spring Security.
+     * @param participanteRepository Repositório de participantes.
+     * @param passwordEncoder Codificador de senhas.
+     * @param tokenProvider Provedor de tokens JWT.
+     */
     public AuthController(AuthenticationManager authenticationManager,
                          ParticipanteRepository participanteRepository,
                          PasswordEncoder passwordEncoder,
@@ -40,6 +51,12 @@ public class AuthController {
         this.tokenProvider = tokenProvider;
     }
 
+    /**
+     * Endpoint para autenticação de utilizador.
+     * Autentica o utilizador com email e senha e retorna um token JWT.
+     * @param loginDTO DTO com email e senha do utilizador.
+     * @return ResponseEntity com token JWT e informações do utilizador.
+     */
     @PostMapping("/login")
     @Operation(summary = "Login do usuário", description = "Autentica o usuário e retorna um token JWT")
     @ApiResponses(value = {
@@ -60,6 +77,12 @@ public class AuthController {
         return ResponseEntity.ok(new JwtResponse(jwt, "Bearer", userPrincipal.getId(), userPrincipal.getEmail()));
     }
 
+    /**
+     * Endpoint para registro de novo utilizador.
+     * Registra um novo utilizador com role USER por padrão.
+     * @param registerDTO DTO com dados do novo utilizador.
+     * @return ResponseEntity com mensagem de sucesso ou erro.
+     */
     @PostMapping("/register")
     @Operation(summary = "Registro de novo usuário", description = "Registra um novo usuário com role USER")
     @ApiResponses(value = {

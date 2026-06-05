@@ -10,20 +10,18 @@ window.addEventListener('load', async function() {
 
 async function loadStats() {
     try {
-        const token = localStorage.getItem('token');
-        
         const [eventosRes, participantesRes, inscricoesRes, certificadosRes] = await Promise.all([
             fetch('/api/eventos', {
-                headers: { 'Authorization': `Bearer ${token}` }
+                headers: getAuthHeaders()
             }),
             fetch('/api/participantes', {
-                headers: { 'Authorization': `Bearer ${token}` }
+                headers: getAuthHeaders()
             }),
             fetch('/api/inscricoes', {
-                headers: { 'Authorization': `Bearer ${token}` }
+                headers: getAuthHeaders()
             }),
             fetch('/api/certificados', {
-                headers: { 'Authorization': `Bearer ${token}` }
+                headers: getAuthHeaders()
             })
         ]);
         

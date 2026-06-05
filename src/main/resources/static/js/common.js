@@ -1,3 +1,17 @@
+// Função para obter o token JWT
+function getAuthHeaders() {
+    const token = localStorage.getItem('token');
+    console.log('Token no getAuthHeaders:', token ? 'Presente' : 'Ausente');
+    const headers = {
+        'Content-Type': 'application/json'
+    };
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+    console.log('Headers:', headers);
+    return headers;
+}
+
 // Função para fazer logout
 function logout() {
     localStorage.removeItem('token');

@@ -1,5 +1,7 @@
 package com.eventos.apoio.dto;
 
+import com.eventos.apoio.dto.ParticipanteDTO;
+import com.eventos.apoio.dto.EventoDTO;
 import com.eventos.apoio.enums.EstadoInscricao;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -22,4 +24,8 @@ public class InscricaoDTO {
 
     @NotNull(message = "O ID do evento é obrigatório")
     private Integer eventoId;
+
+    // Campos para incluir dados relacionados na resposta
+    private ParticipanteDTO participante;
+    private EventoDTO evento;
 }

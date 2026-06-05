@@ -16,6 +16,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Controller REST para gestão de participantes.
+ * Fornece endpoints CRUD para criar, listar, buscar, atualizar e deletar participantes.
+ */
 @RestController
 @RequestMapping("/api/participantes")
 @Tag(name = "Participantes", description = "API para gestão de participantes")
@@ -24,11 +28,21 @@ public class ParticipanteController {
     private final ParticipanteService participanteService;
     private final ParticipanteMapper participanteMapper;
 
+    /**
+     * Construtor com injeção de dependências.
+     * @param participanteService Serviço de participantes.
+     * @param participanteMapper Mapper entre entidade e DTO.
+     */
     public ParticipanteController(ParticipanteService participanteService, ParticipanteMapper participanteMapper) {
         this.participanteService = participanteService;
         this.participanteMapper = participanteMapper;
     }
 
+    /**
+     * Endpoint para criar um novo participante.
+     * @param participanteDTO DTO com dados do novo participante.
+     * @return ResponseEntity com o participante criado.
+     */
     @PostMapping
     @Operation(summary = "Criar novo participante", description = "Cria um novo participante")
     @ApiResponses(value = {
@@ -41,6 +55,10 @@ public class ParticipanteController {
         return ResponseEntity.ok(participanteMapper.toDTO(participanteSalvo));
     }
 
+    /**
+     * Endpoint para listar todos os participantes.
+     * @return ResponseEntity com lista de todos os participantes.
+     */
     @GetMapping
     @Operation(summary = "Listar todos os participantes", description = "Retorna uma lista de todos os participantes")
     @ApiResponses(value = {
@@ -54,6 +72,11 @@ public class ParticipanteController {
         return ResponseEntity.ok(dtos);
     }
 
+    /**
+     * Endpoint para buscar um participante por ID.
+     * @param id ID do participante.
+     * @return ResponseEntity com o participante encontrado.
+     */
     @GetMapping("/{id}")
     @Operation(summary = "Buscar participante por ID", description = "Retorna um participante específico pelo seu ID")
     @ApiResponses(value = {
@@ -66,6 +89,12 @@ public class ParticipanteController {
         return ResponseEntity.ok(participanteMapper.toDTO(participante));
     }
 
+    /**
+     * Endpoint para atualizar um participante existente.
+     * @param id ID do participante a ser atualizado.
+     * @param participanteDTO DTO com novos dados do participante.
+     * @return ResponseEntity com o participante atualizado.
+     */
     @PutMapping("/{id}")
     @Operation(summary = "Atualizar participante", description = "Atualiza os dados de um participante existente")
     @ApiResponses(value = {
@@ -81,6 +110,11 @@ public class ParticipanteController {
         return ResponseEntity.ok(participanteMapper.toDTO(participanteAtualizado));
     }
 
+    /**
+     * Endpoint para deletar um participante.
+     * @param id ID do participante a ser deletado.
+     * @return ResponseEntity sem conteúdo (204 No Content).
+     */
     @DeleteMapping("/{id}")
     @Operation(summary = "Deletar participante", description = "Remove um participante pelo seu ID")
     @ApiResponses(value = {

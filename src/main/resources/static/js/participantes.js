@@ -4,7 +4,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function loadParticipantes() {
     try {
-        const response = await fetch('/api/participantes');
+        const response = await fetch('/api/participantes', {
+            headers: getAuthHeaders()
+        });
         if (response.ok) {
             const participantes = await response.json();
             renderParticipantes(participantes);
@@ -46,7 +48,8 @@ async function deleteParticipante(id) {
     
     try {
         const response = await fetch(`/api/participantes/${id}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: getAuthHeaders()
         });
         
         if (response.ok) {
@@ -61,7 +64,7 @@ async function deleteParticipante(id) {
 }
 
 function editParticipante(id) {
-    window.location.href = `/participantes/editar/${id}`;
+    window.location.href = `/participantes/editar?id=${id}`;
 }
 
 function showError(message) {

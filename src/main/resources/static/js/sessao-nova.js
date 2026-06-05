@@ -1,28 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
-    loadParticipantes();
     loadEventos();
 });
-
-async function loadParticipantes() {
-    try {
-        const response = await fetch('/api/participantes', {
-            headers: getAuthHeaders()
-        });
-        if (response.ok) {
-            const participantes = await response.json();
-            const select = document.getElementById('participanteId');
-            select.innerHTML = '<option value="">Selecione um participante</option>';
-            participantes.forEach(p => {
-                const option = document.createElement('option');
-                option.value = p.id;
-                option.textContent = p.nome;
-                select.appendChild(option);
-            });
-        }
-    } catch (error) {
-        console.error('Error loading participantes:', error);
-    }
-}
 
 async function loadEventos() {
     try {
@@ -45,10 +23,13 @@ async function loadEventos() {
     }
 }
 
-document.getElementById('inscricaoForm').addEventListener('submit', async function(e) {
+document.getElementById('sessaoForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     
-    const participanteId = document.getElementById('participanteId').value;
+    const titulo = document.getElementById('titulo').value;
+    const nomeOrador = document.getElementById('nomeOrador').value;
+    const dataHoraInicio = document.getElementById('dataHoraInicio').value;
+    const dataHoraFim = document.getElementById('dataHoraFim').value;
     const eventoId = document.getElementById('eventoId').value;
     
     const errorMessage = document.getElementById('errorMessage');
@@ -58,30 +39,32 @@ document.getElementById('inscricaoForm').addEventListener('submit', async functi
     successMessage.style.display = 'none';
     
     try {
-        const response = await fetch('/api/inscricoes', {
+        const response = await fetch('/api/sessoes', {
             method: 'POST',
             headers: getAuthHeaders(),
             body: JSON.stringify({ 
-                participanteId: parseInt(participanteId), 
-                eventoId: parseInt(eventoId),
-                estadoInscricao: 'Pendente'
+                titulo, 
+                nomeOrador, 
+                dataHoraInicio, 
+                dataHoraFim, 
+                eventoId: parseInt(eventoId)
             })
         });
         
         if (response.ok) {
             successMessage.style.display = 'block';
-            successMessage.textContent = 'Inscrição criada com sucesso! Redirecionando...';
+            successMessage.textContent = 'Sessão criada com sucesso! Redirecionando...';
             setTimeout(() => {
-                window.location.href = '/inscricoes';
+                window.location.href = '/sessoes';
             }, 2000);
         } else {
             const errorText = await response.text();
             errorMessage.style.display = 'block';
-            errorMessage.textContent = errorText || 'Erro ao criar inscrição';
+            errorMessage.textContent = errorText || 'Erro ao criar sessão';
         }
     } catch (error) {
         errorMessage.style.display = 'block';
-        errorMessage.textContent = 'Erro ao criar inscrição. Tente novamente.';
+        errorMessage.textContent = 'Erro ao criar sessão. Tente novamente.';
         console.error('Error:', error);
     }
 });

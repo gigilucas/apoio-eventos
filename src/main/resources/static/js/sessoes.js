@@ -4,7 +4,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function loadSessoes() {
     try {
-        const response = await fetch('/api/sessoes');
+        const response = await fetch('/api/sessoes', {
+            headers: getAuthHeaders()
+        });
         if (response.ok) {
             const sessoes = await response.json();
             renderSessoes(sessoes);
@@ -46,7 +48,8 @@ async function deleteSessao(id) {
     
     try {
         const response = await fetch(`/api/sessoes/${id}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: getAuthHeaders()
         });
         
         if (response.ok) {
@@ -61,7 +64,7 @@ async function deleteSessao(id) {
 }
 
 function editSessao(id) {
-    window.location.href = `/sessoes/editar/${id}`;
+    window.location.href = `/sessoes/editar?id=${id}`;
 }
 
 function showError(message) {

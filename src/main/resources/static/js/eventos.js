@@ -10,9 +10,8 @@ window.addEventListener('load', async function() {
 
 async function loadEventos() {
     try {
-        const token = localStorage.getItem('token');
         const response = await fetch('/api/eventos', {
-            headers: { 'Authorization': `Bearer ${token}` }
+            headers: getAuthHeaders()
         });
         
         if (response.ok) {
@@ -64,10 +63,9 @@ async function deleteEvento(id) {
     }
     
     try {
-        const token = localStorage.getItem('token');
         const response = await fetch(`/api/eventos/${id}`, {
             method: 'DELETE',
-            headers: { 'Authorization': `Bearer ${token}` }
+            headers: getAuthHeaders()
         });
         
         if (response.ok) {
@@ -83,6 +81,5 @@ async function deleteEvento(id) {
 }
 
 function editEvento(id) {
-    // TODO: Implementar edição de evento
-    alert('Funcionalidade de edição ainda não implementada');
+    window.location.href = `/eventos/editar?id=${id}`;
 }

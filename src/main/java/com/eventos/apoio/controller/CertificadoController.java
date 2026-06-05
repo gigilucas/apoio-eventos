@@ -66,6 +66,21 @@ public class CertificadoController {
         return ResponseEntity.ok(certificadoMapper.toDTO(certificado));
     }
 
+    @PutMapping("/{id}")
+    @Operation(summary = "Atualizar certificado", description = "Atualiza os dados de um certificado existente")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Certificado atualizado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
+            @ApiResponse(responseCode = "404", description = "Certificado não encontrado")
+    })
+    public ResponseEntity<CertificadoDTO> atualizar(
+            @Parameter(description = "ID do certificado") @PathVariable Integer id,
+            @Valid @RequestBody CertificadoDTO certificadoDTO) {
+        Certificado certificado = certificadoMapper.toEntity(certificadoDTO);
+        Certificado certificadoAtualizado = certificadoService.atualizar(id, certificado);
+        return ResponseEntity.ok(certificadoMapper.toDTO(certificadoAtualizado));
+    }
+
     @DeleteMapping("/{id}")
     @Operation(summary = "Deletar certificado", description = "Remove um certificado pelo seu ID")
     @ApiResponses(value = {

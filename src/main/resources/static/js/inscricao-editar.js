@@ -1,7 +1,33 @@
 document.addEventListener('DOMContentLoaded', function() {
-    loadParticipantes();
-    loadEventos();
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
+    
+    if (id) {
+        loadInscricao(id);
+        loadParticipantes();
+        loadEventos();
+    }
 });
+
+async function loadInscricao(id) {
+    try {
+        const response = await fetch(`/api/inscricoes/${id}`, {
+            headers: getAuthHeaders()
+        });
+        
+        if (response.ok) {
+            const inscricao = await response.json();
+            document.getElementById('participanteId').value = inscricao.participanteId || '';
+            document.getElementById('eventoId').value = inscricao.eventoId || '';
+            document.getElementById('estadoInscricao').value = inscricao.estadoInscricao || 'Pendente';
+        } else {
+            showError('Erro ao carregar inscrição');
+        }
+    } catch (error) {
+        showError('Erro ao carregar inscrição');
+        console.error('Error:', error);
+    }
+}
 
 async function loadParticipantes() {
     try {
@@ -48,8 +74,12 @@ async function loadEventos() {
 document.getElementById('inscricaoForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
+    
     const participanteId = document.getElementById('participanteId').value;
     const eventoId = document.getElementById('eventoId').value;
+    const estadoInscricao = document.getElementById('estadoInscricao').value;
     
     const errorMessage = document.getElementById('errorMessage');
     const successMessage = document.getElementById('successMessage');
@@ -58,30 +88,36 @@ document.getElementById('inscricaoForm').addEventListener('submit', async functi
     successMessage.style.display = 'none';
     
     try {
-        const response = await fetch('/api/inscricoes', {
-            method: 'POST',
+        const response = await fetch(`/api/inscricoes/${id}`, {
+            method: 'PUT',
             headers: getAuthHeaders(),
             body: JSON.stringify({ 
                 participanteId: parseInt(participanteId), 
                 eventoId: parseInt(eventoId),
-                estadoInscricao: 'Pendente'
+                estadoInscricao
             })
         });
         
         if (response.ok) {
             successMessage.style.display = 'block';
-            successMessage.textContent = 'Inscrição criada com sucesso! Redirecionando...';
+            successMessage.textContent = 'Inscrição atualizada com sucesso! Redirecionando...';
             setTimeout(() => {
                 window.location.href = '/inscricoes';
             }, 2000);
         } else {
             const errorText = await response.text();
             errorMessage.style.display = 'block';
-            errorMessage.textContent = errorText || 'Erro ao criar inscrição';
+            errorMessage.textContent = errorText || 'Erro ao atualizar inscrição';
         }
     } catch (error) {
         errorMessage.style.display = 'block';
-        errorMessage.textContent = 'Erro ao criar inscrição. Tente novamente.';
+        errorMessage.textContent = 'Erro ao atualizar inscrição. Tente novamente.';
         console.error('Error:', error);
     }
 });
+
+function showError(message) {
+    const errorDiv = document.getElementById('errorMessage');
+    errorDiv.textContent = message;
+    errorDiv.style.display = 'block';
+}
